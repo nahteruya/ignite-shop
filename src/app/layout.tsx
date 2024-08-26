@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 
 import logoImg from "../assets/logo.svg";
+import Image from "next/image";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -21,7 +22,7 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <div className="flex min-h-screen flex-col items-start justify-center">
           <header className="mx-auto w-full max-w-screen-xl py-2">
-            <img src={logoImg.src} alt="" />
+            <Image src={logoImg} alt="" />
           </header>
           {children}
         </div>
