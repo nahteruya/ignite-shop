@@ -20,8 +20,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={montserrat.className}>
-        <div className="flex min-h-screen flex-col items-start justify-center">
-          <header className="mx-auto w-full max-w-screen-xl py-2">
+        <div className="flex min-h-screen flex-col items-start justify-center gap-4">
+          <header className="mx-auto w-full max-w-screen-lg py-2">
             <Image src={logoImg} alt="" />
           </header>
           {children}
