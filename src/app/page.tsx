@@ -8,22 +8,39 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-import { stripe } from "@/lib/stripe";
-import Stripe from "stripe";
+type TProduct = {
+  id: "prod_QkxkNJIDbnr9cL";
+  created: 1725012791;
+  default_price: {
+    id: "price_1PtRpLKellmspScc70zpf2PT";
+    currency: "brl";
+    unit_amount: 7490;
+    unit_amount_decimal: "7490";
+  };
+  description: "Criada no Brasil e feita pro mundo, todos nossos produtos são feitos sob demanda para você usando tecnologia de ponta na estamparia.";
+  images: [
+    "https://files.stripe.com/links/MDB8YWNjdF8xSlFKT0xLZWxsbXNwU2NjfGZsX3Rlc3RfeDVNTFFXcUhBalZ1WmlQMWFUT3pMZnlM00ybPiJby5",
+  ];
+  name: "Camiseta Maratona Explorer 2.0";
+};
+
+export const fetchProducts = async () => {
+  const response = await fetch(
+    "https://api.stripe.com/v1/products?expand[]=data.default_price",
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
+      },
+      next: { revalidate: 86400 },
+    },
+  );
+
+  const data = await response.json();
+  return data.data;
+};
 
 export default async function Home() {
-  const response = await stripe.products.list({
-    expand: ["data.default_price"],
-  });
-  const products = response.data.map((product) => {
-    const price = product.default_price as Stripe.Price;
-    return {
-      id: product.id,
-      name: product.name,
-      imageUrl: product.images[0],
-      price: price.unit_amount,
-    };
-  });
+  const products: TProduct[] = await fetchProducts();
 
   return (
     <main className="ml-auto flex w-full gap-12">
@@ -38,7 +55,7 @@ export default async function Home() {
             <CarouselItem key={product.id} className="h-full basis-1/3">
               <a className="group relative flex min-h-[328px] min-w-[348px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-gradient-to-b from-[#1EA483] to-[#7435D4] p-1">
                 <Image
-                  src={product.imageUrl}
+                  src={product.images[0]}
                   width={260}
                   height={240}
                   alt=""
@@ -49,7 +66,8 @@ export default async function Home() {
                     {product.name}
                   </strong>
                   <span className="text-lg font-bold text-green300">
-                    {product.price !== null && `R$ ${product.price / 100}`}
+                    {product.default_price.unit_amount !== null &&
+                      `R$ ${product.default_price.unit_amount / 100}`}
                   </span>
                 </footer>
               </a>
